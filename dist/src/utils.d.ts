@@ -1,0 +1,10 @@
+declare function decodeParam(param: string): string;
+declare function removeTrailingSlashes(s: any): any;
+declare function addSlashes(s: any): string;
+declare function normalizePath(s: any): any;
+declare function compose(...mws: any): (req: any, res: any, done: any) => any;
+declare function composeThen(req: any, res: any, ...mws: any[]): Promise<unknown>;
+declare function generateETag(body: any, opt: any): any;
+declare function isFresh(req: any, res: any): boolean;
+declare function match(text: string, pattern: string): any;
+export { removeTrailingSlashes, addSlashes, normalizePath, decodeParam, compose, composeThen, generateETag, isFresh, match, };

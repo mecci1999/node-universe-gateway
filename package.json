@@ -1,0 +1,43 @@
+{
+  "name": "node-universe-gateway",
+  "version": "0.0.1",
+  "description": "By using node-universe for a web gateway server",
+  "main": "index.js",
+  "author": "darwin",
+  "license": "MIT",
+  "dependencies": {
+    "@fastify/busboy": "^2.1.0",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.4.5",
+    "es6-error": "^4.1.1",
+    "etag": "^1.8.1",
+    "fresh": "^0.5.2",
+    "isstream": "^0.1.2",
+    "kleur": "^4.1.5",
+    "lodash": "^4.17.21",
+    "node-universe": "^0.0.2",
+    "path-to-regexp": "^6.2.1",
+    "qs": "^6.11.2",
+    "serve-static": "^1.15.0"
+  },
+  "engines": {
+    "node": ">= 18.x.x"
+  },
+  "devDependencies": {
+    "@rollup/plugin-json": "^6.1.0",
+    "@types/body-parser": "^1.19.5",
+    "@types/etag": "^1.8.3",
+    "@types/fresh": "^0.5.2",
+    "@types/isstream": "^0.1.2",
+    "@types/lodash": "^4.14.202",
+    "@types/qs": "^6.9.11",
+    "@types/serve-static": "^1.15.5",
+    "nodemon": "^3.1.0",
+    "prettier-eslint": "^16.3.0",
+    "rollup": "^3.6.0",
+    "rollup-plugin-dts": "^5.3.0",
+    "rollup-plugin-filesize": "^10.0.0",
+    "rollup-plugin-tsc-alias": "^1.1.2",
+    "rollup-plugin-typescript2": "^0.34.1"
+  }
+}
