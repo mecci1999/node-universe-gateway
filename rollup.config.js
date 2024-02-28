@@ -5,7 +5,7 @@ const json = require("@rollup/plugin-json");
 
 module.exports = [
   {
-    input: "./index.ts",
+    input: "./src/index.ts",
     output: [
       {
         dir: "./dist",
@@ -27,7 +27,7 @@ module.exports = [
     ],
   },
   {
-    input: "./index.ts",
+    input: "src/index.ts",
     output: [{ file: "dist/index.d.ts", format: "es" }],
     plugins: [
       dts.default({

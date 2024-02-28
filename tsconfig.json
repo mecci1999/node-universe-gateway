@@ -30,7 +30,6 @@
     "./test/**/*.ts",
     "./test/*.ts",
     "./examples/*.ts",
-    "./*.ts",
     "examples/moon.js",
     "examples/test.js"
   ]
