@@ -74,6 +74,15 @@ declare class Alias {
     multipartHandler(req: any, res: any): void;
 }
 
+declare class MemoryStore {
+    hits: Map<any, any>;
+    resetTime: number;
+    timer: any;
+    constructor(clearPeriod: number);
+    inc(key: string): number;
+    reset(): void;
+}
+
 declare const _default: {
     name: string;
     settings: {
@@ -215,10 +224,118 @@ declare const _default: {
     stopped(): Promise<unknown>;
     bodyParser: bodyParser.BodyParser;
     serveStatic: typeof serveStatic;
-    Errors: any;
     RateLimitStores: {
-        MemoryStore: any;
+        MemoryStore: typeof MemoryStore;
     };
 };
 
-export { _default as default };
+declare const ERR_NO_TOKEN = "NO_TOKEN";
+declare const ERR_INVALID_TOKEN = "INVALID_TOKEN";
+declare const ERR_UNABLE_DECODE_PARAM = "UNABLE_DECODE_PARAM";
+declare const ERR_ORIGIN_NOT_FOUND = "ORIGIN_NOT_FOUND";
+declare const ERR_ORIGIN_NOT_ALLOWED = "ORIGIN_NOT_ALLOWED";
+declare const UniverseError: {
+    new (message: string, code?: any, type?: any, data?: any): {
+        code: UniverseErrorCode;
+        type: UniverseErrorOptionsType;
+        data?: any;
+        retryable: boolean;
+        name: string;
+        message: string;
+        stack?: string | undefined;
+        cause?: unknown;
+    };
+    captureStackTrace(targetObject: object, constructorOpt?: Function | undefined): void;
+    prepareStackTrace?: ((err: Error, stackTraces: NodeJS.CallSite[]) => any) | undefined;
+    stackTraceLimit: number;
+};
+declare const StarClientError: {
+    new (message: string, code: UniverseErrorCode, type: UniverseErrorOptionsType, data?: any): {
+        code: UniverseErrorCode;
+        type: UniverseErrorOptionsType;
+        data?: any;
+        retryable: boolean;
+        name: string;
+        message: string;
+        stack?: string | undefined;
+        cause?: unknown;
+    };
+    captureStackTrace(targetObject: object, constructorOpt?: Function | undefined): void;
+    prepareStackTrace?: ((err: Error, stackTraces: NodeJS.CallSite[]) => any) | undefined;
+    stackTraceLimit: number;
+};
+declare class InvalidRequestBodyError extends UniverseError {
+    constructor(body?: any, error?: any);
+}
+declare class InvalidResponseTypeError extends UniverseError {
+    constructor(dataType?: string);
+}
+declare class UnAuthorizedError extends UniverseError {
+    constructor(type?: string, data?: any);
+}
+declare class ForbiddenError extends UniverseError {
+    constructor(type?: string, data?: any);
+}
+declare class BadRequestError extends UniverseError {
+    constructor(type?: string, data?: any);
+}
+declare class NotFoundError extends UniverseError {
+    constructor(type?: string, data?: any);
+}
+declare class PayloadTooLarge extends StarClientError {
+    constructor(data?: any);
+}
+declare class RateLimitExceeded extends StarClientError {
+    constructor(type?: string, data?: any);
+}
+declare class ServiceUnavailableError extends UniverseError {
+    constructor(type?: string, data?: any);
+}
+
+type error_BadRequestError = BadRequestError;
+declare const error_BadRequestError: typeof BadRequestError;
+declare const error_ERR_INVALID_TOKEN: typeof ERR_INVALID_TOKEN;
+declare const error_ERR_NO_TOKEN: typeof ERR_NO_TOKEN;
+declare const error_ERR_ORIGIN_NOT_ALLOWED: typeof ERR_ORIGIN_NOT_ALLOWED;
+declare const error_ERR_ORIGIN_NOT_FOUND: typeof ERR_ORIGIN_NOT_FOUND;
+declare const error_ERR_UNABLE_DECODE_PARAM: typeof ERR_UNABLE_DECODE_PARAM;
+type error_ForbiddenError = ForbiddenError;
+declare const error_ForbiddenError: typeof ForbiddenError;
+type error_InvalidRequestBodyError = InvalidRequestBodyError;
+declare const error_InvalidRequestBodyError: typeof InvalidRequestBodyError;
+type error_InvalidResponseTypeError = InvalidResponseTypeError;
+declare const error_InvalidResponseTypeError: typeof InvalidResponseTypeError;
+type error_NotFoundError = NotFoundError;
+declare const error_NotFoundError: typeof NotFoundError;
+type error_PayloadTooLarge = PayloadTooLarge;
+declare const error_PayloadTooLarge: typeof PayloadTooLarge;
+type error_RateLimitExceeded = RateLimitExceeded;
+declare const error_RateLimitExceeded: typeof RateLimitExceeded;
+type error_ServiceUnavailableError = ServiceUnavailableError;
+declare const error_ServiceUnavailableError: typeof ServiceUnavailableError;
+declare const error_StarClientError: typeof StarClientError;
+type error_UnAuthorizedError = UnAuthorizedError;
+declare const error_UnAuthorizedError: typeof UnAuthorizedError;
+declare const error_UniverseError: typeof UniverseError;
+declare namespace error {
+  export {
+    error_BadRequestError as BadRequestError,
+    error_ERR_INVALID_TOKEN as ERR_INVALID_TOKEN,
+    error_ERR_NO_TOKEN as ERR_NO_TOKEN,
+    error_ERR_ORIGIN_NOT_ALLOWED as ERR_ORIGIN_NOT_ALLOWED,
+    error_ERR_ORIGIN_NOT_FOUND as ERR_ORIGIN_NOT_FOUND,
+    error_ERR_UNABLE_DECODE_PARAM as ERR_UNABLE_DECODE_PARAM,
+    error_ForbiddenError as ForbiddenError,
+    error_InvalidRequestBodyError as InvalidRequestBodyError,
+    error_InvalidResponseTypeError as InvalidResponseTypeError,
+    error_NotFoundError as NotFoundError,
+    error_PayloadTooLarge as PayloadTooLarge,
+    error_RateLimitExceeded as RateLimitExceeded,
+    error_ServiceUnavailableError as ServiceUnavailableError,
+    error_StarClientError as StarClientError,
+    error_UnAuthorizedError as UnAuthorizedError,
+    error_UniverseError as UniverseError,
+  };
+}
+
+export { Alias, error as Erros, _default as UniverseWeb };

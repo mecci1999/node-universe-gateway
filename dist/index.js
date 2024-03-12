@@ -48,10 +48,33 @@ typeof SuppressedError === "function" ? SuppressedError : function (error, suppr
     return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
 };
 
+const ERR_NO_TOKEN = "NO_TOKEN";
+const ERR_INVALID_TOKEN = "INVALID_TOKEN";
 const ERR_UNABLE_DECODE_PARAM = "UNABLE_DECODE_PARAM";
+const ERR_ORIGIN_NOT_FOUND = "ORIGIN_NOT_FOUND";
 const ERR_ORIGIN_NOT_ALLOWED = "ORIGIN_NOT_ALLOWED";
 const UniverseError = Universe.Errors.UniverseError;
 const StarClientError = Universe.Errors.StarClientError;
+class InvalidRequestBodyError extends UniverseError {
+    constructor(body, error) {
+        super("Invalid request body", 400, "INVALID_REQUEST_BODY", {
+            body,
+            error,
+        });
+    }
+}
+class InvalidResponseTypeError extends UniverseError {
+    constructor(dataType) {
+        super(`Invalid response type '${dataType}'`, 500, "INVALID_RESPONSE_TYPE", {
+            dataType,
+        });
+    }
+}
+class UnAuthorizedError extends UniverseError {
+    constructor(type, data) {
+        super("Unauthorized", 401, type || ERR_INVALID_TOKEN, data);
+    }
+}
 class ForbiddenError extends UniverseError {
     constructor(type, data) {
         super("Forbidden", 403, type, data);
@@ -82,6 +105,26 @@ class ServiceUnavailableError extends UniverseError {
         super("Service unavailable", 503, type, data);
     }
 }
+
+var error = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    BadRequestError: BadRequestError,
+    ERR_INVALID_TOKEN: ERR_INVALID_TOKEN,
+    ERR_NO_TOKEN: ERR_NO_TOKEN,
+    ERR_ORIGIN_NOT_ALLOWED: ERR_ORIGIN_NOT_ALLOWED,
+    ERR_ORIGIN_NOT_FOUND: ERR_ORIGIN_NOT_FOUND,
+    ERR_UNABLE_DECODE_PARAM: ERR_UNABLE_DECODE_PARAM,
+    ForbiddenError: ForbiddenError,
+    InvalidRequestBodyError: InvalidRequestBodyError,
+    InvalidResponseTypeError: InvalidResponseTypeError,
+    NotFoundError: NotFoundError,
+    PayloadTooLarge: PayloadTooLarge,
+    RateLimitExceeded: RateLimitExceeded,
+    ServiceUnavailableError: ServiceUnavailableError,
+    StarClientError: StarClientError,
+    UnAuthorizedError: UnAuthorizedError,
+    UniverseError: UniverseError
+});
 
 const RegexCache = new Map();
 function decodeParam(param) {
@@ -409,7 +452,7 @@ function getServiceFullname(svc) {
     return svc.name;
 }
 const SLASH_REGEX = new RegExp(/\./g);
-var UniverseWeb = {
+var gateway = {
     name: "api",
     settings: {
         port: process.env.PORT || 3000,
@@ -1547,10 +1590,11 @@ var UniverseWeb = {
     },
     bodyParser,
     serveStatic,
-    Errors: require("./errors"),
     RateLimitStores: {
-        MemoryStore: require("./memory-store"),
+        MemoryStore: MemoryStore,
     },
 };
 
-module.exports = UniverseWeb;
+exports.Alias = Alias;
+exports.Erros = error;
+exports.UniverseWeb = gateway;
