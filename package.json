@@ -1,8 +1,9 @@
 {
   "name": "node-universe-gateway",
-  "version": "0.0.1",
+  "version": "1.0.3",
   "description": "By using node-universe for a web gateway server",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
   "author": "darwin",
   "license": "MIT",
   "dependencies": {
