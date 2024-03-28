@@ -1,6 +1,6 @@
 {
   "name": "node-universe-gateway",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "By using node-universe for a web gateway server",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -16,7 +16,7 @@
     "isstream": "^0.1.2",
     "kleur": "^4.1.5",
     "lodash": "^4.17.21",
-    "node-universe": "^0.0.2",
+    "node-universe": "^1.0.3",
     "path-to-regexp": "^6.2.1",
     "qs": "^6.11.2",
     "serve-static": "^1.15.0"
