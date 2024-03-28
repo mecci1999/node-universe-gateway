@@ -1043,9 +1043,7 @@ var gateway = {
             const code = _.isNumber(err.code) && _.inRange(err.code, 400, 599) ? err.code : 500;
             res.writeHead(code);
             const errObj = this.reformatError(err, req, res);
-            res.end(errObj !== undefined
-                ? this.encodeResponse(req, res, errObj)
-                : undefined);
+            res.end(errObj !== undefined ? this.encodeResponse(req, res, errObj) : undefined);
             this.logResponse(req, res);
         },
         reformatError(err, req, res) {
@@ -1111,7 +1109,9 @@ var gateway = {
                 if (settings.indexOf(origin) !== -1)
                     return true;
                 if (settings.indexOf("*") !== -1) {
-                    const wildcard = new RegExp(`^${_.escapeRegExp(settings).replace(/\\\*/g, ".*").replace(/\\\?/g, ".")}$`);
+                    const wildcard = new RegExp(`^${_.escapeRegExp(settings)
+                        .replace(/\\\*/g, ".*")
+                        .replace(/\\\?/g, ".")}$`);
                     return origin.match(wildcard);
                 }
             }
@@ -1242,7 +1242,7 @@ var gateway = {
                 }
                 return c;
             });
-            this.logger.debug("Optimized path order: ", this.routes.map((r) => r.path));
+            this.logger.debug("Optimized path order: ", this.routes.map((r) => r.path).join(","));
         },
         createRoute(opts) {
             this.logRouteRegistration(`Register route to '${opts.path}'`);
