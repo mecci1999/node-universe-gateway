@@ -185,7 +185,7 @@ export default {
 
           if (withActionSchema && alias.action) {
             const actionSchema = actionList.find(
-              (item) => item.name == alias.action,
+              (item) => item.name == alias.action
             );
             if (actionSchema && actionSchema.action) {
               (obj as GenericObject).action = _.omit(actionSchema.action, [
@@ -261,11 +261,11 @@ export default {
         (this as any).server = (this as any).settings.http2
           ? http2.createSecureServer(
               (this as any).settings.https,
-              (this as any).httpHandler,
+              (this as any).httpHandler
             )
           : https.createServer(
               (this as any).settings.https,
-              (this as any).httpHandler,
+              (this as any).httpHandler
             );
         (this as any).isHTTPS = true;
       } else {
@@ -279,10 +279,10 @@ export default {
       if ((this as any).settings.httpServerTimeout) {
         (this as any).logger.debug(
           "Override default http(s) server timeout:",
-          (this as any).settings.httpServerTimeout,
+          (this as any).settings.httpServerTimeout
         );
         (this as any).server.setTimeout(
-          (this as any).settings.httpServerTimeout,
+          (this as any).settings.httpServerTimeout
         );
       }
 
@@ -291,7 +291,7 @@ export default {
       ).settings.requestTimeout;
       (this as any).logger.debug(
         "Setting http(s) server request timeout to:",
-        (this as any).settings.requestTimeout,
+        (this as any).settings.requestTimeout
       );
     },
 
@@ -316,7 +316,7 @@ export default {
           "\n",
           err.stack,
           "\nData:",
-          err.data,
+          err.data
         );
       }
       this.sendError(req, res, err);
@@ -388,7 +388,7 @@ export default {
           const shouldBreak = this.corsHandler(
             (this as any).settings,
             req,
-            res,
+            res
           ); // check cors settings first
           if (shouldBreak) {
             return;
@@ -510,7 +510,7 @@ export default {
       if (alias.action && route.hasWhitelist) {
         if (!this.checkWhitelist(route, alias.action)) {
           (this as any).logger.debug(
-            `  The '${alias.action}' action is not in the whitelist!`,
+            `  The '${alias.action}' action is not in the whitelist!`
           );
           throw new ServiceNotFoundError({ action: alias.action });
         }
@@ -540,7 +540,7 @@ export default {
         const endpoint = (this as any).star.findNextActionEndpoint(
           alias.action,
           route.callOptions,
-          ctx,
+          ctx
         );
         if (endpoint instanceof Error) {
           if (!alias._notDefined && endpoint instanceof ServiceNotFoundError) {
@@ -575,7 +575,7 @@ export default {
           route,
           req,
           res,
-          alias,
+          alias
         );
         if (user) {
           (this as any).logger.debug("Authenticated user", user);
@@ -600,7 +600,7 @@ export default {
           (this as any).settings.logRequest in (this as any).logger
         )
           (this as any).logger[(this as any).settings.logRequest](
-            `   Call custom function in '${alias.toString()}' alias`,
+            `   Call custom function in '${alias.toString()}' alias`
           );
 
         await new Promise((resolve, reject) => {
@@ -616,14 +616,14 @@ export default {
             alias.action,
             req,
             res,
-            alias.type == "stream" ? req : req.$params,
+            alias.type == "stream" ? req : req.$params
           );
         else
           throw new StarServerError(
             "No alias handler",
             500,
             "NO_ALIAS_HANDLER",
-            { path: req.originalUrl, alias: _.pick(alias, ["method", "path"]) },
+            { path: req.originalUrl, alias: _.pick(alias, ["method", "path"]) }
           );
       } else if (alias.action) {
         return this.callAction(
@@ -631,7 +631,7 @@ export default {
           alias.action,
           req,
           res,
-          alias.type == "stream" ? req : req.$params,
+          alias.type == "stream" ? req : req.$params
         );
       }
     },
@@ -657,7 +657,7 @@ export default {
             (this as any).settings.logRequest in (this as any).logger
           )
             (this as any).logger[(this as any).settings.logRequest](
-              `   Call '${actionName}' action`,
+              `   Call '${actionName}' action`
             );
           if (
             (this as any).settings.logRequestParams &&
@@ -665,7 +665,7 @@ export default {
           )
             (this as any).logger[(this as any).settings.logRequestParams](
               "   Params:",
-              params,
+              params
             );
         }
 
@@ -759,7 +759,7 @@ export default {
         /* istanbul ignore next */
         if (!location) {
           (this as any).logger.warn(
-            `The 'ctx.meta.$location' is missing for status code '${res.statusCode}'!`,
+            `The 'ctx.meta.$location' is missing for status code '${res.statusCode}'!`
           );
         } else {
           res.setHeader("Location", location);
@@ -803,7 +803,7 @@ export default {
       if (Buffer.isBuffer(data)) {
         res.setHeader(
           "Content-Type",
-          responseType || "application/octet-stream",
+          responseType || "application/octet-stream"
         );
         res.setHeader("Content-Length", data.length);
         chunk = data;
@@ -813,7 +813,7 @@ export default {
         const buf = Buffer.from(data as any);
         res.setHeader(
           "Content-Type",
-          responseType || "application/octet-stream",
+          responseType || "application/octet-stream"
         );
         res.setHeader("Content-Length", buf.length);
         chunk = buf;
@@ -822,7 +822,7 @@ export default {
       else if (isStream.isReadable(data)) {
         res.setHeader(
           "Content-Type",
-          responseType || "application/octet-stream",
+          responseType || "application/octet-stream"
         );
         chunk = data;
       }
@@ -830,7 +830,7 @@ export default {
       else if (_.isObject(data) || Array.isArray(data)) {
         res.setHeader(
           "Content-Type",
-          responseType || "application/json; charset=utf-8",
+          responseType || "application/json; charset=utf-8"
         );
         chunk = this.encodeResponse(req, res, data);
       }
@@ -946,7 +946,7 @@ export default {
           e.message,
           (e as any).code || (e as any).status,
           (e as any).type,
-          (e as any).data,
+          (e as any).data
         );
         err.name = e.name;
       }
@@ -975,9 +975,7 @@ export default {
       res.writeHead(code);
       const errObj = this.reformatError(err, req, res);
       res.end(
-        errObj !== undefined
-          ? this.encodeResponse(req, res, errObj)
-          : undefined,
+        errObj !== undefined ? this.encodeResponse(req, res, errObj) : undefined
       );
 
       this.logResponse(req, res);
@@ -1024,7 +1022,7 @@ export default {
       if (questionIdx !== -1) {
         query = queryString.parse(
           req.url.substring(questionIdx + 1),
-          (this as any).settings.qsOptions,
+          (this as any).settings.qsOptions
         );
         url = req.url.substring(0, questionIdx);
       }
@@ -1044,7 +1042,7 @@ export default {
         (this as any).settings.logRequest in (this as any).logger
       )
         (this as any).logger[(this as any).settings.logRequest](
-          `=> ${req.method} ${req.url}`,
+          `=> ${req.method} ${req.url}`
         );
     },
 
@@ -1088,7 +1086,9 @@ export default {
         (this as any).settings.logResponse in (this as any).logger
       )
         (this as any).logger[(this as any).settings.logResponse](
-          `<= ${this.coloringStatusCode(res.statusCode)} ${req.method} ${kleur.bold(req.originalUrl)} ${time}`,
+          `<= ${this.coloringStatusCode(res.statusCode)} ${
+            req.method
+          } ${kleur.bold(req.originalUrl)} ${time}`
         );
 
       /* istanbul ignore next */
@@ -1098,7 +1098,7 @@ export default {
       ) {
         (this as any).logger[(this as any).settings.logResponseData](
           "  Data:",
-          data,
+          data
         );
       }
     },
@@ -1118,7 +1118,9 @@ export default {
           // Based on: https://github.com/hapijs/hapi
           // eslint-disable-next-line
           const wildcard = new RegExp(
-            `^${_.escapeRegExp(settings).replace(/\\\*/g, ".*").replace(/\\\?/g, ".")}$`,
+            `^${_.escapeRegExp(settings)
+              .replace(/\\\*/g, ".*")
+              .replace(/\\\?/g, ".")}$`
           );
           return origin.match(wildcard);
         }
@@ -1172,12 +1174,12 @@ export default {
       if (_.isString(route.cors.exposedHeaders)) {
         res.setHeader(
           "Access-Control-Expose-Headers",
-          route.cors.exposedHeaders,
+          route.cors.exposedHeaders
         );
       } else if (Array.isArray(route.cors.exposedHeaders)) {
         res.setHeader(
           "Access-Control-Expose-Headers",
-          route.cors.exposedHeaders.join(", "),
+          route.cors.exposedHeaders.join(", ")
         );
       }
 
@@ -1186,12 +1188,12 @@ export default {
         if (_.isString(route.cors.allowedHeaders)) {
           res.setHeader(
             "Access-Control-Allow-Headers",
-            route.cors.allowedHeaders,
+            route.cors.allowedHeaders
           );
         } else if (Array.isArray(route.cors.allowedHeaders)) {
           res.setHeader(
             "Access-Control-Allow-Headers",
-            route.cors.allowedHeaders.join(", "),
+            route.cors.allowedHeaders.join(", ")
           );
         } else {
           // AllowedHeaders doesn't specified, so we send back from req headers
@@ -1208,7 +1210,7 @@ export default {
         } else if (Array.isArray(route.cors.methods)) {
           res.setHeader(
             "Access-Control-Allow-Methods",
-            route.cors.methods.join(", "),
+            route.cors.methods.join(", ")
           );
         }
 
@@ -1264,7 +1266,7 @@ export default {
     addRoute(opts, toBottom = true) {
       const route = this.createRoute(opts);
       const idx = (this as any).routes.findIndex((r) =>
-        this.isEqualRoutes(r, route),
+        this.isEqualRoutes(r, route)
       );
       if (idx !== -1) {
         // Replace the previous
@@ -1292,7 +1294,7 @@ export default {
 
         // Clean global aliases for this route
         (this as any).aliases = (this as any).aliases.filter(
-          (a) => a.route != route,
+          (a) => a.route != route
         );
 
         // Remote route
@@ -1314,7 +1316,7 @@ export default {
 
         // Clean global aliases for this route
         (this as any).aliases = (this as any).aliases.filter(
-          (a) => a.route != route,
+          (a) => a.route != route
         );
 
         // Remote route
@@ -1343,7 +1345,7 @@ export default {
 
       (this as any).logger.debug(
         "Optimized path order: ",
-        (this as any).routes.map((r) => r.path),
+        (this as any).routes.map((r) => r.path).join(",")
       );
     },
 
@@ -1366,7 +1368,7 @@ export default {
 
         if (!_.isFunction(fn)) {
           (this as any).logger.warn(
-            "Define 'authorize' method in the service to enable authorization.",
+            "Define 'authorize' method in the service to enable authorization."
           );
           route.authorization = null;
         } else route.authorization = fn;
@@ -1377,7 +1379,7 @@ export default {
 
         if (!_.isFunction(fn)) {
           (this as any).logger.warn(
-            "Define 'authenticate' method in the service to enable authentication.",
+            "Define 'authenticate' method in the service to enable authentication."
           );
           route.authentication = null;
         } else route.authentication = fn;
@@ -1435,7 +1437,7 @@ export default {
             methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
           },
           (this as any).settings.cors,
-          opts.cors,
+          opts.cors
         );
       } else {
         route.cors = null;
@@ -1459,7 +1461,7 @@ export default {
               );
             },
           },
-          rateLimit,
+          rateLimit
         );
 
         route.rateLimit = opts;
@@ -1468,7 +1470,7 @@ export default {
           route.rateLimit.store = new opts.StoreFactory(
             opts.window,
             opts,
-            (this as any).star,
+            (this as any).star
           );
         else route.rateLimit.store = new MemoryStore(opts.window);
       }
@@ -1527,18 +1529,18 @@ export default {
     createRouteAliases(route, aliases) {
       // Clean previous aliases for this route
       (this as any).aliases = (this as any).aliases.filter(
-        (a) => !this.isEqualRoutes(a.route, route),
+        (a) => !this.isEqualRoutes(a.route, route)
       );
 
       // Process aliases definitions from route settings
       _.forIn(aliases, (action, matchPath) => {
         if (matchPath.startsWith("REST ")) {
           (this as any).aliases.push(
-            ...this.generateRESTAliases(route, matchPath, action),
+            ...this.generateRESTAliases(route, matchPath, action)
           );
         } else {
           (this as any).aliases.push(
-            this.createAlias(route, matchPath, action),
+            this.createAlias(route, matchPath, action)
           );
         }
       });
@@ -1600,7 +1602,7 @@ export default {
       }
 
       return actions.map((item) =>
-        this.createAlias(route, aliases[item], `${action}.${item}`),
+        this.createAlias(route, aliases[item], `${action}.${item}`)
       );
     },
 
@@ -1611,12 +1613,12 @@ export default {
      */
     regenerateAutoAliases(route) {
       this.logRouteRegistration(
-        `♻ Generate aliases for '${route.path}' route...`,
+        `♻ Generate aliases for '${route.path}' route...`
       );
 
       // Clean previous aliases for this route
       (this as any).aliases = (this as any).aliases.filter(
-        (alias) => alias.route != route || !alias._generated,
+        (alias) => alias.route != route || !alias._generated
       );
 
       const processedServices = new Set();
@@ -1645,7 +1647,7 @@ export default {
           basePath = addSlashes(
             _.isString(basePath)
               ? basePath
-              : serviceName.replace(SLASH_REGEX, "/"),
+              : serviceName.replace(SLASH_REGEX, "/")
           );
 
           _.forIn(service.actions, (action) => {
@@ -1677,7 +1679,7 @@ export default {
                   alias = this.parseActionRestObject(
                     restRoute,
                     action.rawName,
-                    basePath,
+                    basePath
                   );
                 }
 
@@ -1685,7 +1687,7 @@ export default {
                   alias.path = removeTrailingSlashes(normalizePath(alias.path));
                   alias._generated = true;
                   (this as any).aliases.push(
-                    this.createAlias(route, alias, action.name),
+                    this.createAlias(route, alias, action.name)
                   );
                 }
               }
@@ -1778,7 +1780,7 @@ export default {
         (this as any).settings.logRouteRegistration in (this as any).logger
       )
         (this as any).logger[(this as any).settings.logRouteRegistration](
-          message,
+          message
         );
     },
   },
@@ -1823,7 +1825,7 @@ export default {
       const opts = (this as any).settings.assets.options || {};
       (this as any).serve = serveStatic(
         (this as any).settings.assets.folder,
-        opts,
+        opts
       );
     }
 
@@ -1856,7 +1858,7 @@ export default {
       /* istanbul ignore next */
       (this as any).routes.forEach(
         (route) =>
-          route.opts.autoAliases && (this as any).regenerateAutoAliases(route),
+          route.opts.autoAliases && (this as any).regenerateAutoAliases(route)
       );
 
       (this as any).star.broadcast("$api.aliases.regenerated");
@@ -1883,10 +1885,12 @@ export default {
               ? "localhost"
               : addr.address;
           (this as any).logger.info(
-            `API Gateway listening on ${(this as any).isHTTPS ? "https" : "http"}://${listenAddr}:${addr.port}`,
+            `API Gateway listening on ${
+              (this as any).isHTTPS ? "https" : "http"
+            }://${listenAddr}:${addr.port}`
           );
           resolve(true);
-        },
+        }
       );
     });
   },
