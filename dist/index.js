@@ -1,22 +1,4 @@
-'use strict';
-
-var Universe = require('node-universe');
-var queryString = require('qs');
-var _ = require('lodash');
-var etag = require('etag');
-var fresh = require('fresh');
-var http2 = require('http2');
-var http = require('http');
-var https = require('https');
-var os = require('os');
-var pathToRegexp = require('path-to-regexp');
-var kleur = require('kleur');
-var Busboy = require('@fastify/busboy');
-var isStream = require('isstream');
-var bodyParser = require('body-parser');
-var serveStatic = require('serve-static');
-
-/******************************************************************************
+'use strict';var nodeUniverse=require('node-universe'),queryString=require('qs'),_=require('lodash'),etag=require('etag'),fresh=require('fresh'),http2=require('http2'),http=require('http'),https=require('https'),os=require('os'),Busboy=require('@fastify/busboy'),kleur=require('kleur'),pathToRegexp=require('path-to-regexp'),isStream=require('isstream'),bodyParser=require('body-parser'),serveStatic=require('serve-static');/******************************************************************************
 Copyright (c) Microsoft Corporation.
 
 Permission to use, copy, modify, and/or distribute this software for any
@@ -30,7 +12,7 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
-/* global Reflect, Promise, SuppressedError, Symbol */
+/* global Reflect, Promise, SuppressedError, Symbol, Iterator */
 
 
 function __awaiter(thisArg, _arguments, P, generator) {
@@ -46,16 +28,12 @@ function __awaiter(thisArg, _arguments, P, generator) {
 typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
     var e = new Error(message);
     return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
-};
-
-const ERR_NO_TOKEN = "NO_TOKEN";
+};const ERR_NO_TOKEN = "NO_TOKEN";
 const ERR_INVALID_TOKEN = "INVALID_TOKEN";
 const ERR_UNABLE_DECODE_PARAM = "UNABLE_DECODE_PARAM";
 const ERR_ORIGIN_NOT_FOUND = "ORIGIN_NOT_FOUND";
 const ERR_ORIGIN_NOT_ALLOWED = "ORIGIN_NOT_ALLOWED";
-const UniverseError = Universe.Errors.UniverseError;
-const StarClientError = Universe.Errors.StarClientError;
-class InvalidRequestBodyError extends UniverseError {
+class InvalidRequestBodyError extends nodeUniverse.Errors.UniverseError {
     constructor(body, error) {
         super("Invalid request body", 400, "INVALID_REQUEST_BODY", {
             body,
@@ -63,70 +41,48 @@ class InvalidRequestBodyError extends UniverseError {
         });
     }
 }
-class InvalidResponseTypeError extends UniverseError {
+class InvalidResponseTypeError extends nodeUniverse.Errors.UniverseError {
     constructor(dataType) {
         super(`Invalid response type '${dataType}'`, 500, "INVALID_RESPONSE_TYPE", {
             dataType,
         });
     }
 }
-class UnAuthorizedError extends UniverseError {
+class UnAuthorizedError extends nodeUniverse.Errors.UniverseError {
     constructor(type, data) {
         super("Unauthorized", 401, type || ERR_INVALID_TOKEN, data);
     }
 }
-class ForbiddenError extends UniverseError {
+class ForbiddenError extends nodeUniverse.Errors.UniverseError {
     constructor(type, data) {
         super("Forbidden", 403, type, data);
     }
 }
-class BadRequestError extends UniverseError {
+class BadRequestError extends nodeUniverse.Errors.UniverseError {
     constructor(type, data) {
         super("Bad request", 400, type, data);
     }
 }
-class NotFoundError extends UniverseError {
+class NotFoundError extends nodeUniverse.Errors.UniverseError {
     constructor(type, data) {
         super("Not found", 404, type || "NOT_FOUND", data);
     }
 }
-class PayloadTooLarge extends StarClientError {
+class PayloadTooLarge extends nodeUniverse.Errors.StarClientError {
     constructor(data) {
         super("Payload too large", 413, "PAYLOAD_TOO_LARGE", data);
     }
 }
-class RateLimitExceeded extends StarClientError {
+class RateLimitExceeded extends nodeUniverse.Errors.StarClientError {
     constructor(type, data) {
-        super("Rate limit exceeded", 429, type, data);
+        super("Rate limit exceeded", 429, `${type}`, data);
     }
 }
-class ServiceUnavailableError extends UniverseError {
+class ServiceUnavailableError extends nodeUniverse.Errors.UniverseError {
     constructor(type, data) {
         super("Service unavailable", 503, type, data);
     }
-}
-
-var error = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    BadRequestError: BadRequestError,
-    ERR_INVALID_TOKEN: ERR_INVALID_TOKEN,
-    ERR_NO_TOKEN: ERR_NO_TOKEN,
-    ERR_ORIGIN_NOT_ALLOWED: ERR_ORIGIN_NOT_ALLOWED,
-    ERR_ORIGIN_NOT_FOUND: ERR_ORIGIN_NOT_FOUND,
-    ERR_UNABLE_DECODE_PARAM: ERR_UNABLE_DECODE_PARAM,
-    ForbiddenError: ForbiddenError,
-    InvalidRequestBodyError: InvalidRequestBodyError,
-    InvalidResponseTypeError: InvalidResponseTypeError,
-    NotFoundError: NotFoundError,
-    PayloadTooLarge: PayloadTooLarge,
-    RateLimitExceeded: RateLimitExceeded,
-    ServiceUnavailableError: ServiceUnavailableError,
-    StarClientError: StarClientError,
-    UnAuthorizedError: UnAuthorizedError,
-    UniverseError: UniverseError
-});
-
-const RegexCache = new Map();
+}var error=/*#__PURE__*/Object.freeze({__proto__:null,BadRequestError:BadRequestError,ERR_INVALID_TOKEN:ERR_INVALID_TOKEN,ERR_NO_TOKEN:ERR_NO_TOKEN,ERR_ORIGIN_NOT_ALLOWED:ERR_ORIGIN_NOT_ALLOWED,ERR_ORIGIN_NOT_FOUND:ERR_ORIGIN_NOT_FOUND,ERR_UNABLE_DECODE_PARAM:ERR_UNABLE_DECODE_PARAM,ForbiddenError:ForbiddenError,InvalidRequestBodyError:InvalidRequestBodyError,InvalidResponseTypeError:InvalidResponseTypeError,NotFoundError:NotFoundError,PayloadTooLarge:PayloadTooLarge,RateLimitExceeded:RateLimitExceeded,ServiceUnavailableError:ServiceUnavailableError,UnAuthorizedError:UnAuthorizedError});const RegexCache = new Map();
 function decodeParam(param) {
     try {
         return decodeURIComponent(param);
@@ -177,11 +133,11 @@ function composeThen(req, res, ...mws) {
     return new Promise((resolve, reject) => {
         compose.call(this, ...mws)(req, res, (err) => {
             if (err) {
-                if (err instanceof UniverseError)
+                if (err instanceof nodeUniverse.Errors.UniverseError)
                     return reject(err);
                 if (err instanceof Error)
-                    return reject(new UniverseError(err.message, err.code || err.status, err.type));
-                return reject(new UniverseError(err));
+                    return reject(new nodeUniverse.Errors.UniverseError(err.message, err.code || err.status, err.type));
+                return reject(new nodeUniverse.Errors.UniverseError(err));
             }
             resolve(true);
         });
@@ -243,9 +199,7 @@ function match(text, pattern) {
         RegexCache.set(origPattern, regex);
     }
     return regex.test(text);
-}
-
-class Alias {
+}class Alias {
     constructor(service, route, opts, action) {
         this.fullPath = "";
         this.keys = [];
@@ -377,7 +331,7 @@ class Alias {
         });
         busboy.on("finish", () => __awaiter(this, void 0, void 0, function* () {
             if (!busboyOptions.empty && numOfFiles == 0)
-                return this.service.sendError(req, res, new StarClientError("File missing in the request", 500, ""));
+                return this.service.sendError(req, res, new nodeUniverse.Errors.StarClientError("File missing in the request", 500, ""));
             if (numOfFiles == 0 && hasField) {
                 promises.push(ctx.call(this.action, {}, _.defaultsDeep({}, this.route.opts.callOptions, {
                     meta: {
@@ -417,9 +371,7 @@ class Alias {
         }
         req.pipe(busboy);
     }
-}
-
-class MemoryStore {
+}class MemoryStore {
     constructor(clearPeriod) {
         this.hits = new Map();
         this.resetTime = Date.now() + clearPeriod;
@@ -438,12 +390,10 @@ class MemoryStore {
     reset() {
         this.hits.clear();
     }
-}
-
-const MAPPING_POLICY_ALL = "all";
+}const MAPPING_POLICY_ALL = "all";
 const MAPPING_POLICY_RESTRICT = "restrict";
-const ServiceNotFoundError = Universe.Errors.ServiceNotFoundError;
-const StarServerError = Universe.Errors.StarServerError;
+const ServiceNotFoundError = nodeUniverse.Errors.ServiceNotFoundError;
+const StarServerError = nodeUniverse.Errors.StarServerError;
 function getServiceFullname(svc) {
     if (svc.version != null && svc.settings.$noVersionPrefix !== true)
         return ((typeof svc.version == "number" ? "v" + svc.version : svc.version) +
@@ -835,7 +785,10 @@ var gateway = {
                     if (alias.action)
                         return this.callAction(route, alias.action, req, res, alias.type == "stream" ? req : req.$params);
                     else
-                        throw new StarServerError("No alias handler", 500, "NO_ALIAS_HANDLER", { path: req.originalUrl, alias: _.pick(alias, ["method", "path"]) });
+                        throw new StarServerError("No alias handler", 500, "NO_ALIAS_HANDLER", {
+                            path: req.originalUrl,
+                            alias: _.pick(alias, ["method", "path"]),
+                        });
                 }
                 else if (alias.action) {
                     return this.callAction(route, alias.action, req, res, alias.type == "stream" ? req : req.$params);
@@ -1021,9 +974,9 @@ var gateway = {
                 this.logResponse(req, res);
                 return;
             }
-            if (!(err instanceof UniverseError)) {
+            if (!(err instanceof nodeUniverse.Errors.UniverseError)) {
                 const e = err;
-                err = new UniverseError(e.message, e.code || e.status, e.type, e.data);
+                err = new nodeUniverse.Errors.UniverseError(e.message, e.code || e.status, e.type, e.data);
                 err.name = e.name;
             }
             const ctx = req.$ctx;
@@ -1593,8 +1546,4 @@ var gateway = {
     RateLimitStores: {
         MemoryStore: MemoryStore,
     },
-};
-
-exports.Alias = Alias;
-exports.Erros = error;
-exports.UniverseWeb = gateway;
+};exports.Alias=Alias;exports.Erros=error;exports.UniverseWeb=gateway;

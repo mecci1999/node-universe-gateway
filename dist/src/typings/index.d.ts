@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import Alias from "../alias";
 import { IncomingMessage, ServerResponse } from "http";
 export interface GenericObject {
