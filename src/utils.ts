@@ -1,9 +1,5 @@
-import Universe from "node-universe";
-import {
-  BadRequestError,
-  ERR_UNABLE_DECODE_PARAM,
-  UniverseError,
-} from "./error";
+import { Errors } from "node-universe";
+import { BadRequestError, ERR_UNABLE_DECODE_PARAM } from "./error";
 import _ from "lodash";
 import etag from "etag";
 import fresh from "fresh";
@@ -72,20 +68,20 @@ function composeThen(req, res, ...mws) {
     compose.call(this, ...mws)(req, res, (err) => {
       if (err) {
         /* istanbul ignore next */
-        if (err instanceof UniverseError) return reject(err);
+        if (err instanceof Errors.UniverseError) return reject(err);
 
         /* istanbul ignore next */
         if (err instanceof Error)
           return reject(
-            new UniverseError(
+            new Errors.UniverseError(
               err.message,
               (err as any).code || (err as any).status,
-              (err as any).type,
-            ),
+              (err as any).type
+            )
           ); // TODO err.stack
 
         /* istanbul ignore next */
-        return reject(new UniverseError(err));
+        return reject(new Errors.UniverseError(err));
       }
 
       resolve(true);

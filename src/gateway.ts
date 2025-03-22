@@ -1,4 +1,4 @@
-import Universe from "node-universe";
+import { Errors } from "node-universe";
 import queryString from "qs";
 import _ from "lodash";
 import {
@@ -23,7 +23,6 @@ import {
   ForbiddenError,
   RateLimitExceeded,
   ERR_ORIGIN_NOT_ALLOWED,
-  UniverseError,
 } from "./error";
 import isStream from "isstream";
 import bodyParser from "body-parser";
@@ -33,8 +32,8 @@ import kleur from "kleur";
 const MAPPING_POLICY_ALL = "all";
 const MAPPING_POLICY_RESTRICT = "restrict";
 
-const ServiceNotFoundError = Universe.Errors.ServiceNotFoundError;
-const StarServerError = Universe.Errors.StarServerError;
+const ServiceNotFoundError = Errors.ServiceNotFoundError;
+const StarServerError = Errors.StarServerError;
 
 function getServiceFullname(svc: any) {
   if (svc.version != null && svc.settings.$noVersionPrefix !== true)
@@ -622,8 +621,11 @@ export default {
           throw new StarServerError(
             "No alias handler",
             500,
-            "NO_ALIAS_HANDLER",
-            { path: req.originalUrl, alias: _.pick(alias, ["method", "path"]) }
+            "NO_ALIAS_HANDLER" as any,
+            {
+              path: req.originalUrl,
+              alias: _.pick(alias, ["method", "path"]),
+            } as any
           );
       } else if (alias.action) {
         return this.callAction(
@@ -940,9 +942,9 @@ export default {
       }
 
       /* istanbul ignore next */
-      if (!(err instanceof UniverseError)) {
+      if (!(err instanceof Errors.UniverseError)) {
         const e = err;
-        err = new UniverseError(
+        err = new Errors.UniverseError(
           e.message,
           (e as any).code || (e as any).status,
           (e as any).type,

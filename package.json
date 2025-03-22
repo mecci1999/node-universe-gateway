@@ -16,15 +16,17 @@
     "isstream": "^0.1.2",
     "kleur": "^4.1.5",
     "lodash": "^4.17.21",
-    "node-universe": "^1.0.3",
+    "node-universe": "^1.4.2",
     "path-to-regexp": "^6.2.1",
     "qs": "^6.11.2",
-    "serve-static": "^1.15.0"
+    "serve-static": "^1.15.0",
+    "typescript": "^5.8.2"
   },
   "engines": {
     "node": ">= 18.x.x"
   },
   "devDependencies": {
+    "@rollup/plugin-alias": "^5.1.1",
     "@rollup/plugin-json": "^6.1.0",
     "@types/body-parser": "^1.19.5",
     "@types/etag": "^1.8.3",

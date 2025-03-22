@@ -1,15 +1,16 @@
-import { Route } from "./typings";
+import Busboy from "@fastify/busboy";
+import kleur from "kleur";
 import _ from "lodash";
+import { Errors } from "node-universe";
+import { pathToRegexp } from "path-to-regexp";
+import { PayloadTooLarge } from "./error";
+import { Route } from "./typings";
 import {
   addSlashes,
   compose,
   decodeParam,
   removeTrailingSlashes,
 } from "./utils";
-import { pathToRegexp } from "path-to-regexp";
-import kleur from "kleur";
-import Busboy from "@fastify/busboy";
-import { PayloadTooLarge, StarClientError } from "./error";
 
 export default class Alias {
   public service: any;
@@ -63,7 +64,7 @@ export default class Alias {
         action.map((mw) => {
           if (_.isString(mw)) this.action = mw;
           else if (_.isFunction(mw)) return mw;
-        }),
+        })
       );
       this.handler = compose.call(service, ...mws);
     } else if (action != null) {
@@ -83,7 +84,7 @@ export default class Alias {
     this.re = pathToRegexp(
       this.fullPath,
       this.keys,
-      route.opts.pathToRegexpOptions || {},
+      route.opts.pathToRegexpOptions || {}
     ); // Options: https://github.com/pillarjs/path-to-regexp#usage
 
     if (this.type == "multipart") {
@@ -161,7 +162,7 @@ export default class Alias {
     const busboyOptions = _.defaultsDeep(
       { headers: req.headers },
       this.busboyConfig,
-      this.route.opts.busboyConfig,
+      this.route.opts.busboyConfig
     );
     const busboy = new Busboy(busboyOptions);
     busboy.on("file", (fieldname, file, filename, encoding, mimetype) => {
@@ -171,7 +172,7 @@ export default class Alias {
           busboyOptions.onFileSizeLimit.call(this.service, file, busboy);
         }
         file.destroy(
-          new PayloadTooLarge({ fieldname, filename, encoding, mimetype }),
+          new PayloadTooLarge({ fieldname, filename, encoding, mimetype })
         );
       });
       numOfFiles++;
@@ -188,13 +189,13 @@ export default class Alias {
                 mimetype: mimetype,
                 $params: req.$params,
               },
-            }),
+            })
           )
           .catch((err) => {
             file.resume(); // Drain file stream to continue processing form
             busboy.emit("error", err);
             return err;
-          }),
+          })
       );
     });
     busboy.on("field", (field, value) => {
@@ -208,7 +209,11 @@ export default class Alias {
         return this.service.sendError(
           req,
           res,
-          new StarClientError("File missing in the request", 500, ""),
+          new Errors.StarClientError(
+            "File missing in the request",
+            500,
+            "" as any
+          )
         );
 
       // Call the action if no files but multipart fields
@@ -221,8 +226,8 @@ export default class Alias {
               meta: {
                 $params: req.$params,
               },
-            }),
-          ),
+            })
+          )
         );
       }
 
@@ -243,7 +248,7 @@ export default class Alias {
             this.route,
             req,
             res,
-            data,
+            data
           );
 
         this.service.sendResponse(req, res, data, {});
@@ -267,8 +272,8 @@ export default class Alias {
           this.service,
           busboy,
           this,
-          this.service,
-        ),
+          this.service
+        )
       );
     }
 
@@ -278,8 +283,8 @@ export default class Alias {
           this.service,
           busboy,
           this,
-          this.service,
-        ),
+          this.service
+        )
       );
     }
 
@@ -289,8 +294,8 @@ export default class Alias {
           this.service,
           busboy,
           this,
-          this.service,
-        ),
+          this.service
+        )
       );
     }
 
