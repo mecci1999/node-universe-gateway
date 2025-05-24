@@ -564,6 +564,7 @@ export default {
       // onBeforeCall handling
       if (route.onBeforeCall) {
         await route.onBeforeCall.call(this, ctx, route, req, res, alias);
+        req.$params.meta = {...req.$params.meta, ...ctx.meta}
       }
 
       // Authentication
