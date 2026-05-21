@@ -876,6 +876,13 @@ export default {
       } else {
         // respond
         if (isStream.isReadable(data)) {
+          const destroyStream = () => {
+            if (typeof (data as any).destroy === 'function') {
+              (data as any).destroy();
+            }
+          };
+          req.once('aborted', destroyStream);
+          res.once('close', destroyStream);
           //Stream response
           data.pipe(res);
         } else {
